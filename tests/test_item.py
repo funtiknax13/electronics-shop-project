@@ -25,11 +25,11 @@ def test_apply_discount():
 
 def test_instantiate_from_csv():
     Item.instantiate_from_csv()
-    assert len(Item.all) == 9  # в файл
-    item3 = Item.all[4]
+    assert len(Item.all) == 10  # в файл
+    item3 = Item.all[5]
     assert item3.name == 'Смартфон'
     assert item3.quantity == 1
-    item4 = Item.all[7]
+    item4 = Item.all[8]
     assert item4.price == 50
 
 
