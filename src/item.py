@@ -1,5 +1,6 @@
 import csv
 import os
+from src.errors import InstantiateCSVError
 
 
 class Item:
@@ -32,6 +33,9 @@ class Item:
         return self.__name
 
     def __add__(self, other):
+        """
+        Складывает товары по количеству
+        """
         if not isinstance(other, self.__class__):
             raise ValueError('Складывать можно только объекты Item и дочерние от них.')
         return self.quantity + other.quantity
@@ -62,16 +66,30 @@ class Item:
             print("Exception: Длина наименования товара превышает 10 символов.")
 
     @classmethod
-    def instantiate_from_csv(cls):
-        os.chdir("..")
-        path = os.path.join(os.getcwd(), "src", "items.csv")
-        with open(path, encoding="utf-8", newline='') as csvfile:
-            reader = csv.DictReader(csvfile)
-            for row in reader:
-                cls(row["name"], cls.string_to_number(row["price"]), cls.string_to_number(row["quantity"]))
+    def instantiate_from_csv(cls, file_name: str):
+        """
+        Формирует экземпляры класса из CSV файла
+        """
+        # file_name = "items.csv"
+        path = os.path.join(os.getcwd(), "..", "src", file_name)
+        try:
+            with open(path, encoding="utf-8", newline='') as csvfile:
+                reader = csv.DictReader(csvfile)
+                for row in reader:
+                    if "name" in row and "price" in row and "quantity" in row:
+                        cls(row["name"], cls.string_to_number(row["price"]), cls.string_to_number(row["quantity"]))
+                    else:
+                        raise InstantiateCSVError(file_name)
+        except FileNotFoundError:
+            print(f"FileNotFoundError: Отсутствует файл {file_name}")
+            return f"FileNotFoundError: Отсутствует файл {file_name}"
+
 
     @staticmethod
     def string_to_number(data: str):
+        """
+        Преобразование строки в число
+        """
         if data.replace(".", "", 1).isdigit():
             return int(float(data))
         else:

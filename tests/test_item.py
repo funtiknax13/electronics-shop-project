@@ -24,13 +24,19 @@ def test_apply_discount():
 
 
 def test_instantiate_from_csv():
-    Item.instantiate_from_csv()
+    Item.instantiate_from_csv("items.csv")
     assert len(Item.all) == 10  # в файл
     item3 = Item.all[5]
     assert item3.name == 'Смартфон'
     assert item3.quantity == 1
     item4 = Item.all[8]
     assert item4.price == 50
+    # homework_6
+    assert Item.instantiate_from_csv("items1.csv") == "FileNotFoundError: Отсутствует файл items1.csv"
+    with pytest.raises(Exception) as ex:
+        Item.instantiate_from_csv("itemsd.csv")
+    assert "Файл itemsd.csv поврежден" in str(ex.value)
+
 
 
 def test_string_to_number():
@@ -51,4 +57,5 @@ def test_add():
     with pytest.raises(ValueError) as ex:
         phone1 + 3
     assert "Складывать можно только объекты Item и дочерние от них." in str(ex.value)
+
 
